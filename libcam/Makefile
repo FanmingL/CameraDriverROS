@@ -41,4 +41,4 @@ clean:
 install:
 	$(MKDIR) /usr/local/include/ocam/
 	cp ./$(TARGET) /usr/local/lib
-	cp ./*.hpp /usr/local/include/cam
+	cp ./*.hpp /usr/local/include/ocam
