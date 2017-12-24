@@ -11,17 +11,7 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 #include <iostream>
- 
-/**
- * Example of the OpenCV VideoCapture.
- *  - Using the independent thread for the high frame rate streaming(>= 60fps.)
- *  - Requirements;
- *      withrobot_platform.hpp(Thread, Mutex)
- 
 
-**
- * main
- */
 int main(int argc, char* argv[])
 {
 
@@ -50,8 +40,8 @@ int main(int argc, char* argv[])
     std::string windowName = camName + " " + camSerialNumber;
     cv::Mat srcImg(cv::Size(camFormat.width, camFormat.height), CV_8UC2);
     cv::Mat gray(cv::Size(camFormat.width, camFormat.height), CV_8UC1);
-    cv::Mat con = (cv::Mat_<double>(4, 1) << -0.433630707186419, 0.219013828295360, 0.0, 0.0);
-    cv::Mat iner = (cv::Mat_<double>(3, 3) << 313.7605, 0, 156.9846, 0, 313.2382, 124.7260, 0, 0, 1.0000);
+    cv::Mat con = (cv::Mat_<double>(4, 1) << -0.433630707186419, 0.219013828295360, 0.0, 0.0);//相机畸变参数
+    cv::Mat iner = (cv::Mat_<double>(3, 3) << 313.7605, 0, 156.9846, 0, 313.2382, 124.7260, 0, 0, 1.0000);//相机内参
     //     cv::Mat con = (cv::Mat_<double>(4,1)<<-0.4267,0.2130,0.0,0.0);
      //   cv::Mat iner = (cv::Mat_<double>(3,3)<<660.3323,0,304.6620,0,655.4458,243.3709,0,0,1);
 	cv::Mat map1, map2;
@@ -67,12 +57,13 @@ int main(int argc, char* argv[])
         }
         cv::remap(srcImg,srcImg,map1,map2,cv::INTER_LINEAR);
 		cv::cvtColor(srcImg,gray,CV_YUV2GRAY_YUYV);
+        //cv::cvtColor(srcImg,gray,CV_YUV2BGR_YUYV);//转为BGR图像
         ros::Time now = ros::Time::now();
 
         header.stamp=now;
         img_msg=cv_bridge::CvImage(header, "mono8", gray).toImageMsg();
-        //img_msg=cv_bridge::CvImage(header, "bgr8",gray ).toImageMsg();
-        pub_img.publish(img_msg); // ros::Publisher pub_img = node.advertise<sensor_msgs::Image>("topic", queuesize);
+        //img_msg=cv_bridge::CvImage(header, "bgr8",gray ).toImageMsg();//bgr图像传输
+        pub_img.publish(img_msg);
 
  
         ros::spinOnce();
